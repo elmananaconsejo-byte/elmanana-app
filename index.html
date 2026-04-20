@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#1F3A68" />
+  <title>El Mañana · Comunidad</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Identity Services para login sin servidor -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div id="app" class="app">
+    <!-- Header -->
+    <header id="topbar" class="topbar hidden">
+      <button id="backBtn" class="icon-btn" aria-label="Volver">←</button>
+      <h1 id="topTitle">El Mañana</h1>
+      <button id="logoutBtn" class="icon-btn" aria-label="Salir">⎋</button>
+    </header>
+
+    <!-- Screens -->
+    <section id="screen-login" class="screen active">
+      <div class="hero">
+        <div class="hero-logo">🏢</div>
+        <h1>Conjunto El Mañana</h1>
+        <p>Bienvenido a la app de la comunidad.</p>
+      </div>
+      <div id="googleBtn"></div>
+      <p class="small">Al continuar aceptas el tratamiento de datos según el reglamento interno del conjunto.</p>
+    </section>
+
+    <section id="screen-register" class="screen">
+      <h2>Completa tu registro</h2>
+      <p class="muted">Estos datos solo los ve la administración.</p>
+      <form id="registerForm">
+        <label>Nombre completo <input name="nombre" required /></label>
+        <label>Cédula <input name="cedula" required /></label>
+        <label>Teléfono <input name="telefono" required /></label>
+        <label>Torre <input name="torre" placeholder="Ej. Torre 1" required /></label>
+        <label>Apartamento <input name="apartamento" placeholder="Ej. 502" required /></label>
+        <button type="submit" class="primary">Enviar solicitud</button>
+      </form>
+    </section>
+
+    <section id="screen-pending" class="screen">
+      <div class="state-card">
+        <div class="emoji">⏳</div>
+        <h2>Tu cuenta está en revisión</h2>
+        <p>La administración validará tu información y podrás entrar apenas quede aprobada. Te avisaremos por correo.</p>
+      </div>
+    </section>
+
+    <section id="screen-home" class="screen">
+      <h2 id="greet">Hola</h2>
+      <div id="admin-shortcut" class="hidden">
+        <button id="btnAdminPanel" class="admin-cta">Ir al panel de administración</button>
+      </div>
+      <h3>Muro de actividades</h3>
+      <div id="muro" class="muro"></div>
+    </section>
+
+    <section id="screen-pqrs" class="screen">
+      <div class="row between">
+        <h2>Mis PQRS</h2>
+        <button id="btnNuevaPqrs" class="primary small">Nueva</button>
+      </div>
+      <div id="pqrs-list"></div>
+    </section>
+
+    <section id="screen-pqrs-new" class="screen">
+      <h2>Nueva PQRS</h2>
+      <form id="pqrsForm">
+        <label>Tipo
+          <select name="tipo" required>
+            <option>Petición</option>
+            <option>Queja</option>
+            <option>Reclamo</option>
+            <option>Solicitud</option>
+            <option>Felicitación</option>
+          </select>
+        </label>
+        <label>Asunto <input name="asunto" required /></label>
+        <label>Descripción <textarea name="descripcion" rows="5" required></textarea></label>
+        <button type="submit" class="primary">Enviar</button>
+      </form>
+    </section>
+
+    <section id="screen-admin" class="screen">
+      <h2>Panel del administrador</h2>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="solicitudes">Solicitudes</button>
+        <button class="tab-btn" data-tab="pqrs">Bandeja PQRS</button>
+        <button class="tab-btn" data-tab="publicar">Publicar</button>
+      </div>
+      <div id="tab-solicitudes" class="tab active">
+        <div id="solicitudes-list"></div>
+      </div>
+      <div id="tab-pqrs" class="tab">
+        <div id="all-pqrs-list"></div>
+      </div>
+      <div id="tab-publicar" class="tab">
+        <form id="activityForm">
+          <label>Título <input name="titulo" required /></label>
+          <label>Descripción <textarea name="descripcion" rows="4" required></textarea></label>
+          <label>Imagen (URL opcional) <input name="imagen" placeholder="https://..." /></label>
+          <label>Fecha del evento (opcional) <input name="fechaEvento" type="date" /></label>
+          <label>Lugar <input name="lugar" /></label>
+          <label>Categoría
+            <select name="categoria">
+              <option>Noticia</option>
+              <option>Evento</option>
+              <option>Alerta</option>
+              <option>Mantenimiento</option>
+              <option>Otro</option>
+            </select>
+          </label>
+          <label class="checkbox"><input type="checkbox" name="destacada" /> Marcar como destacada</label>
+          <button type="submit" class="primary">Publicar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Bottom nav -->
+    <nav id="nav" class="nav hidden">
+      <button class="nav-btn active" data-go="home"><span>🏠</span><small>Inicio</small></button>
+      <button class="nav-btn" data-go="pqrs"><span>💬</span><small>PQRS</small></button>
+      <button class="nav-btn" data-go="carnet"><span>🪪</span><small>Mi carnet</small></button>
+    </nav>
+
+    <!-- Carnet modal -->
+    <section id="screen-carnet" class="screen carnet-screen">
+      <div class="carnet">
+        <div class="carnet-header">
+          <h2>Carnet digital</h2>
+          <span id="carnet-id" class="chip"></span>
+        </div>
+        <div class="carnet-body">
+          <div id="carnet-nombre" class="big"></div>
+          <div id="carnet-ubicacion" class="muted"></div>
+          <div class="carnet-row"><b>Cédula:</b> <span id="carnet-cedula"></span></div>
+          <div class="carnet-row"><b>Teléfono:</b> <span id="carnet-telefono"></span></div>
+          <div class="carnet-row"><b>Estado:</b> <span id="carnet-estado" class="chip ok"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+    }
+  </script>
+</body>
+</html>

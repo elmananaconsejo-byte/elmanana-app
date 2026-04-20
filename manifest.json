@@ -1,0 +1,15 @@
+{
+  "name": "Conjunto El Mañana",
+  "short_name": "El Mañana",
+  "description": "App de la comunidad: noticias, PQRS y reservas.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1F3A68",
+  "theme_color": "#1F3A68",
+  "orientation": "portrait",
+  "lang": "es-CO",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
