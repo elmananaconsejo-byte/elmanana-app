@@ -4,7 +4,7 @@
 
 // 1) URL de la Web App de Apps Script (termina en /exec)
 //    La obtienes al hacer "Implementar > Nueva implementación" en Apps Script.
-window.API_URL = 'https://script.google.com/macros/s/AKfycbwUHDhIaK7fC38F5jaDxbq-L5s9dxrhWHQC0uP8LXMZnVg3ja5Ac3eUqXe1GYTIB7_J/exec';
+window.API_URL = 'https://script.google.com/macros/s/AKfycbyPTlozWs4wmpyhchiM2E39TFayoWcbN1KBQHJdUyZU-SIJd-VyS4rHMx95cUacCU7A/exec';
 
 // 2) Client ID de OAuth 2.0 (tipo "Aplicación web") desde Google Cloud Console.
 //    Crea uno en https://console.cloud.google.com/apis/credentials
