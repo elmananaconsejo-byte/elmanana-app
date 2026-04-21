@@ -9,24 +9,51 @@ const state = {
   currentScreen: 'login',
 };
 
-/* ----------------------- API helpers ----------------------- */
+/* ----------------------- API helpers (JSONP) ----------------------- */
+/**
+ * Apps Script solo expone CORS para requests que terminan OK.
+ * JSONP esquiva CORS: inyecta un <script> con ?callback=fnName
+ * y el backend envuelve la respuesta en esa función.
+ */
 
-function apiGet(action, params = {}) {
-  const url = new URL(window.API_URL);
-  url.searchParams.set('action', action);
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-  return fetch(url.toString()).then(r => r.json());
+let _jsonpCounter = 0;
+function apiCall(action, params = {}) {
+  return new Promise((resolve, reject) => {
+    const cb = '_jsonp_cb_' + (++_jsonpCounter);
+    const url = new URL(window.API_URL);
+    url.searchParams.set('action', action);
+    url.searchParams.set('callback', cb);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+
+    const script = document.createElement('script');
+    let done = false;
+    const cleanup = () => {
+      delete window[cb];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+    const timer = setTimeout(() => {
+      if (done) return;
+      done = true; cleanup();
+      reject(new Error('Timeout al llamar a la API'));
+    }, 15000);
+
+    window[cb] = (data) => {
+      done = true; clearTimeout(timer); cleanup();
+      resolve(data);
+    };
+    script.onerror = () => {
+      if (done) return;
+      done = true; clearTimeout(timer); cleanup();
+      reject(new Error('No se pudo contactar el backend'));
+    };
+    script.src = url.toString();
+    document.body.appendChild(script);
+  });
 }
 
-function apiPost(action, params = {}) {
-  const formData = new URLSearchParams();
-  formData.set('action', action);
-  Object.entries(params).forEach(([k, v]) => formData.set(k, v));
-  return fetch(window.API_URL, {
-    method: 'POST',
-    body: formData,
-  }).then(r => r.json());
-}
+// alias para mantener compatibilidad con el resto del código
+const apiGet  = (action, params = {}) => apiCall(action, params);
+const apiPost = (action, params = {}) => apiCall(action, params);
 
 /* ----------------------- UI helpers ----------------------- */
 
